@@ -8,17 +8,40 @@
     @mouseleave="isHovering = false"
   >
     <div class="card__inner">
-      <!-- 卡背 -->
+      <!-- Back of Card (The Kjerag Theme) -->
       <div class="card__face card__face--back">
-        <div class="card__brand">
-          <span class="card__brand-mark">RHODES ISLAND</span>
-          <span class="card__brand-sub">RHINE LAB • ARK</span>
+        
+        <!-- Top White Section -->
+        <div class="kjerag-top">
+            <div class="kjerag-pattern-text">
+                <span>KIERAGARDES BLESSING</span>
+                <span>KIERAGARDES BLESSING</span>
+                <span>KIERAGARDES BLESSING</span>
+            </div>
+            <div class="brand-badge">
+                <span class="brand-main">KIERAGARDES</span>
+                <span class="brand-sub">BLESSING</span>
+            </div>
         </div>
-        <div class="card__back-pattern"></div>
-        <div class="card__back-glow"></div>
+
+        <!-- Middle Divider & Emblem -->
+        <div class="kjerag-divider">
+            <div class="center-emblem">
+                <div class="diamond-glow"></div>
+                <div class="diamond-shape"></div>
+                <div class="inner-cross"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Blue Tech Section -->
+        <div class="kjerag-bottom">
+            <div class="tech-lines"></div>
+            <div class="bottom-code">No. 07971</div>
+        </div>
+
       </div>
 
-      <!-- 卡正面（结果） -->
+      <!-- Front/Reward Face -->
       <div v-if="reward" class="card__face card__face--front">
         <div class="card__reward">
           <div class="card__reward-title">{{ reward.title }}</div>
@@ -51,12 +74,10 @@ const reward = computed(() => props.card.reward)
 
 const tiltStyle = computed(() => {
   if (!props.tilt) return {}
-
   const { x, y, light } = props.tilt
-
   return {
-    transform: `rotateX(${y}deg) rotateY(${x}deg)`,
-    '--light-position': `${light * 100}%`,
+    transform: `rotateX(${y * 0.5}deg) rotateY(${x * 0.5}deg)`,
+    '--light-pos': `${light * 100}%`,
   }
 })
 
@@ -71,27 +92,31 @@ function handleClick() {
 .card {
   position: relative;
   width: 100%;
-  aspect-ratio: 2.2 / 3;
+  /* Taller aspect ratio approx 2:3.5 */
+  aspect-ratio: 9 / 16; 
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  transition: filter 0.2s ease, transform 0.3s ease;
+  user-select: none;
 }
 
 .card--idle {
-  animation: sway 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.1s);
 }
 
 .card--idle.card--hover {
-  filter: brightness(1.08);
-  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
+  transform: translateY(-8px) scale(1.02);
+  filter: brightness(1.1);
+  z-index: 10;
 }
 
 .card--picked {
   pointer-events: none;
 }
-
 .card--completed {
-  opacity: 0.6;
+  opacity: 0.5;
+  filter: grayscale(0.8);
   pointer-events: none;
 }
 
@@ -100,7 +125,9 @@ function handleClick() {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.6s;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .card__face {
@@ -108,73 +135,150 @@ function handleClick() {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 10px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
-.card__face--back {
-  background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.8) 0%, rgba(234, 234, 244, 0.9) 35%, rgba(36, 46, 89, 0.95) 35%, rgba(15, 20, 45, 0.98) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
-}
+/* --- Kjerag Theme Styles --- */
 
-.card__brand {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+.card__face--back {
+  background: #0f172a;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  color: rgba(153, 27, 27, 0.8);
-  font-size: 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.card__brand-sub {
-  color: rgba(71, 85, 105, 0.85);
-  font-size: 0.5rem;
+.kjerag-top {
+    flex: 0 0 28%;
+    background: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.card__back-pattern {
-  width: 62%;
-  height: 62%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.35), transparent 55%),
-    repeating-linear-gradient(45deg, rgba(148, 163, 184, 0.15), rgba(148, 163, 184, 0.15) 6px, transparent 6px, transparent 12px);
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: 8px;
-  position: relative;
-  transform: rotate(45deg);
+.kjerag-pattern-text {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    transform: rotate(-10deg) scale(1.2);
+    pointer-events: none;
+}
+.kjerag-pattern-text span {
+    font-size: 0.6rem;
+    font-weight: 900;
+    white-space: nowrap;
+    text-transform: uppercase;
+    color: #000;
 }
 
-.card__back-pattern::after {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  border-radius: 6px;
+.brand-badge {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #334155;
+    border: 1px solid #94a3b8;
+    padding: 2px 4px;
+    background: rgba(255,255,255,0.6);
+}
+.brand-main {
+    font-size: 0.45rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+}
+.brand-sub {
+    font-size: 0.35rem;
+    letter-spacing: 0.15em;
 }
 
-.card__back-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 60% 40%, rgba(56, 189, 248, 0.25), transparent 50%);
-  mix-blend-mode: screen;
-  pointer-events: none;
+.kjerag-divider {
+    height: 2px;
+    background: #3b82f6; 
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+.center-emblem {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diamond-shape {
+    width: 18px;
+    height: 18px;
+    background: #0f172a;
+    border: 1px solid #06b6d4; 
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5), inset 0 0 5px rgba(6, 182, 212, 0.3);
+}
+
+.diamond-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.8) 0%, transparent 70%);
+    opacity: 0.5;
+    animation: pulse 3s infinite;
+}
+
+.inner-cross {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #fff;
+}
+
+.kjerag-bottom {
+    flex: 1;
+    background: linear-gradient(180deg, #1e293b 0%, #020617 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 10px 10px;
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+.bottom-code {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-family: monospace;
+    font-size: 0.5rem;
+    color: rgba(148, 163, 184, 0.4);
+    letter-spacing: 0.1em;
 }
 
 .card__face--front {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%);
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .card__reward {
@@ -183,18 +287,25 @@ function handleClick() {
 }
 
 .card__reward-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .card__reward-desc {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   opacity: 0.9;
+  line-height: 1.3;
 }
 
-@keyframes sway {
-  0%, 100% { transform: rotate(-1deg); }
-  50% { transform: rotate(1deg); }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
 }
 </style>

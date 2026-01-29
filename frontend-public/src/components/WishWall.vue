@@ -9,14 +9,16 @@
     </header>
 
     <!-- 卡片网格 -->
-    <div class="wall-grid">
-      <Card
-        v-for="card in cards"
-        :key="card.id"
-        :card="card"
-        :tilt="tilt"
-        @pick="handlePick"
-      />
+    <div class="wall-container-clipper">
+      <div class="wall-grid">
+        <Card
+          v-for="card in cards"
+          :key="card.id"
+          :card="card"
+          :tilt="tilt"
+          @pick="handlePick"
+        />
+      </div>
     </div>
 
     <!-- 主按钮 -->
@@ -50,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import Card from './Card.vue'
 import PickedCardLayer from './PickedCardLayer.vue'
 import { useTilt } from '@/composables/useTilt'
@@ -93,22 +95,19 @@ async function handlePick(card: CardState) {
   const reward = await performDraw(card)
 
   if (reward) {
-    // 抽取成功，等待用户关闭弹出层
+    // 抽取成功
   } else {
     // 抽取失败，重置动画
     resetAnimation()
   }
 }
 
-// 处理按钮点击（其实可以不用，只是为了提示）
 function handleButtonClick() {
   if (remaining.value > 0) {
     console.log('请点击上方的许愿签进行抽取')
   }
 }
 
-
-// 处理关闭弹出层
 function handleCloseLayer() {
   if (pickedCard.value) {
     completeDraw(pickedCard.value)
@@ -119,7 +118,7 @@ function handleCloseLayer() {
 // 初始化
 onMounted(async () => {
   initDeviceId()
-  initCards(10) // 创建 10 张卡片 (2排5列)
+  initCards(14) // Adjusted to 14 cards (7x2)
   await fetchEligibility()
 })
 </script>
@@ -129,14 +128,13 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  padding: clamp(1.2rem, 2vw, 2rem) clamp(1.2rem, 3vw, 3rem) 4.5rem;
+  padding: clamp(1.2rem, 2vw, 2rem) clamp(1.2rem, 3vw, 3rem) 6rem;
   display: flex;
   flex-direction: column;
   background-color: #0b0f1f;
   overflow: hidden;
 }
 
-/* 模糊遮罩层 */
 .wish-wall::before {
   content: '';
   position: absolute;
@@ -148,7 +146,6 @@ onMounted(async () => {
   z-index: 0;
 }
 
-/* 背景图片层 */
 .wish-wall::after {
   content: '';
   position: absolute;
@@ -203,16 +200,26 @@ onMounted(async () => {
   color: rgba(226, 232, 240, 0.7);
 }
 
+/* Container to center and clip the rotated grid */
+.wall-container-clipper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    z-index: 10;
+    margin-top: -3vh; 
+}
+
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(120px, 1fr));
-  grid-template-rows: repeat(2, minmax(140px, 1fr));
-  gap: clamp(0.6rem, 1.2vw, 1rem);
-  width: min(900px, 92vw);
-  margin: clamp(4.5rem, 10vh, 6.5rem) auto 0;
-  transform: rotate(-5deg) skewX(-4deg);
-  align-self: center;
-  z-index: 10;
+  grid-template-columns: repeat(7, minmax(60px, 100px));
+  grid-template-rows: repeat(2, auto);
+  gap: clamp(0.5rem, 1vw, 0.8em);
+  /* Rotated -25deg to match the diagonal reference */
+  transform: rotate(-25deg);
+  transform-style: preserve-3d;
+  margin: 0 auto;
 }
 
 .cta-button {
@@ -272,35 +279,31 @@ onMounted(async () => {
 
 @media (max-width: 1024px) {
   .wall-grid {
-    grid-template-columns: repeat(5, minmax(110px, 1fr));
-    grid-template-rows: repeat(2, minmax(120px, 1fr));
-    transform: rotate(-4deg) skewX(-3deg);
-    width: min(800px, 94vw);
-  }
-
-  .cta-button {
-    bottom: clamp(6rem, 12vh, 7.5rem);
+     grid-template-columns: repeat(7, minmax(45px, 70px));
+     gap: 0.4rem;
   }
 }
 
 @media (max-width: 768px) {
-  .wall-grid {
-    grid-template-columns: repeat(5, minmax(90px, 1fr));
-    grid-template-rows: repeat(2, minmax(100px, 1fr));
-    transform: none;
+  .wall-container-clipper {
+      margin-top: 2rem;
   }
-
+  .wall-grid {
+    /* Flatten grid on mobile */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    transform: none;
+    width: 90vw;
+  }
   .cta-button {
     position: static;
     align-self: center;
     margin-top: 1rem;
+    margin-bottom: 5rem;
   }
-
   .rule-bar {
-    position: static;
     grid-template-columns: 1fr;
   }
-
   .rule-item--time {
     justify-self: start;
   }
@@ -321,13 +324,7 @@ onMounted(async () => {
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 100%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
+  from { opacity: 0; transform: translate(-50%, 100%); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 </style>
