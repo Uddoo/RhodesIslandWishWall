@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 奖励池
+model Reward {
+  id          Int      @id @default(autoincrement())
+  title       String   // 奖励名称
+  description String?  // 奖励描述
+  type        String   // 奖励类型 (points/物品/空签)
+  weight      Int      @default(1) // 权重 (用于概率计算)
+  stock       Int      // 剩余库存
+  totalStock  Int      // 总库存
+  image       String?  // 展示图片 URL
+  enabled     Boolean  @default(true) // 是否启用
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 关联抽取记录
+  drawRecords DrawRecord[]
+
+  @@map("rewards")
+}
+
+// 抽取记录
+model DrawRecord {
+  id        Int      @id @default(autoincrement())
+  rewardId  Int      // 关联奖励
+  userId    String?  // 用户 ID (可选)
+  ipAddress String?  // IP 地址
+  userAgent String?  // User-Agent
+  deviceId  String?  // 设备指纹
+  createdAt DateTime @default(now())
+
+  // 关联奖励
+  reward Reward @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+
+  @@map("draw_records")
+  @@index([rewardId])
+  @@index([ipAddress])
+  @@index([deviceId])
+  @@index([createdAt])
+}
+
+// 管理员用户
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique // 用户名
+  passwordHash String   // 密码哈希
+  role         String   @default("admin") // 角色
+  createdAt    DateTime @default(now())
+
+  @@map("users")
+}
+
+// 系统配置
+model Config {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique // 配置键
+  value       String   // 配置值
+  description String?  // 描述
+  updatedAt   DateTime @updatedAt
+
+  @@map("configs")
+}

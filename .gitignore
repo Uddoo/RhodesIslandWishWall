@@ -15,14 +15,13 @@ yarn.lock
 pnpm-lock.yaml
 package-lock.json
 npm-debug.log*
-*.log
 
 # Frontend build output
-/dist/
-/build/
-/.vite/
-/.turbo/
-/.parcel-cache/
+dist/
+build/
+.vite/
+.turbo/
+.parcel-cache/
 
 # TypeScript
 *.tsbuildinfo
@@ -55,7 +54,29 @@ logs/
 *.bak
 *.orig
 
-# AI
+# AI/Spec/Infra
 openspecs/
 .github/
 .shared/
+
+# Design/Assets output
+assets-export/
+design-system/
+
+# System/OS
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Editor backups
+*~
+*.tmp
+*.temp
+
+# Test/coverage
+coverage/
+test-results/
+
+# Ignore exported/cut images
+Docs/素材清单.md.bak
+Docs/素材清单-*.md
