@@ -10,7 +10,12 @@
     <div class="card__inner">
       <!-- 卡背 -->
       <div class="card__face card__face--back">
+        <div class="card__brand">
+          <span class="card__brand-mark">RHODES ISLAND</span>
+          <span class="card__brand-sub">RHINE LAB • ARK</span>
+        </div>
         <div class="card__back-pattern"></div>
+        <div class="card__back-glow"></div>
       </div>
 
       <!-- 卡正面（结果） -->
@@ -66,10 +71,10 @@ function handleClick() {
 .card {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 2.2 / 3;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: transform 0.3s ease;
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card--idle {
@@ -77,8 +82,8 @@ function handleClick() {
 }
 
 .card--idle.card--hover {
-  transform: scale(1.03);
-  filter: brightness(1.1);
+  filter: brightness(1.08);
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
 }
 
 .card--picked {
@@ -103,27 +108,68 @@ function handleClick() {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .card__face--back {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.8) 0%, rgba(234, 234, 244, 0.9) 35%, rgba(36, 46, 89, 0.95) 35%, rgba(15, 20, 45, 0.98) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.card__brand {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: rgba(153, 27, 27, 0.8);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.card__brand-sub {
+  color: rgba(71, 85, 105, 0.85);
+  font-size: 0.5rem;
 }
 
 .card__back-pattern {
-  width: 60%;
-  height: 60%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  width: 62%;
+  height: 62%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.35), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(148, 163, 184, 0.15), rgba(148, 163, 184, 0.15) 6px, transparent 6px, transparent 12px);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  position: relative;
+  transform: rotate(45deg);
+}
+
+.card__back-pattern::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 6px;
+}
+
+.card__back-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 60% 40%, rgba(56, 189, 248, 0.25), transparent 50%);
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
 .card__face--front {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
@@ -137,8 +183,8 @@ function handleClick() {
 }
 
 .card__reward-title {
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 

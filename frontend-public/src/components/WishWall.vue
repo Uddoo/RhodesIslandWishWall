@@ -1,36 +1,44 @@
 <template>
   <section class="wish-wall" :data-stage="stage">
-    <!-- HUD: 剩余次数 -->
-    <div class="wall-hud">
-      <div class="count-badge">
-        <span class="count-text">{{ remaining }}/{{ total }}</span>
+    <div class="wall-panel">
+      <button class="close-button" type="button" @click="handleClosePanel">×</button>
+
+      <header class="wall-header">
+        <div class="hud-label">REMAINING<br />剩余可选签数</div>
+        <div class="hud-count">
+          <span class="hud-value">{{ remaining }}</span>
+          <span class="hud-total">/{{ total }}</span>
+        </div>
+      </header>
+
+      <!-- 卡片网格 -->
+      <div class="wall-grid">
+        <Card
+          v-for="card in cards"
+          :key="card.id"
+          :card="card"
+          :tilt="tilt"
+          @pick="handlePick"
+        />
       </div>
-    </div>
 
-    <!-- 卡片网格 -->
-    <div class="wall-grid">
-      <Card
-        v-for="card in cards"
-        :key="card.id"
-        :card="card"
-        :tilt="tilt"
-        @pick="handlePick"
-      />
-    </div>
+      <!-- 主按钮 -->
+      <div class="panel-actions">
+        <button
+          class="cta-button"
+          :disabled="remaining === 0 || loading"
+          @click="handleButtonClick"
+        >
+          {{ ctaText }}
+        </button>
+      </div>
 
-    <!-- 主按钮 -->
-    <button
-      class="cta-button"
-      :disabled="remaining === 0 || loading"
-      @click="handleButtonClick"
-    >
-      {{ ctaText }}
-    </button>
-
-    <!-- 规则栏 -->
-    <div class="rule-bar">
-      <span class="rule-item">RULE1: 每日可抽取 {{ total }} 次</span>
-      <span class="rule-item">活动时间: 2026-12-31</span>
+      <!-- 规则栏 -->
+      <div class="rule-bar">
+        <span class="rule-item">RULE1 用尽当日次数抽取的所有许愿签中，合成玉数量最多的1张为当日最终奖励。</span>
+        <span class="rule-item">RULE2 当日许愿签合成玉奖励不足400时，次日可选择3张许愿签。</span>
+        <span class="rule-item rule-item--time">结束时间 2026/12/31 03:59</span>
+      </div>
     </div>
 
     <!-- 错误提示 -->
@@ -105,6 +113,10 @@ function handleButtonClick() {
   }
 }
 
+function handleClosePanel() {
+  console.log('close panel')
+}
+
 // 处理关闭弹出层
 function handleCloseLayer() {
   if (pickedCard.value) {
@@ -126,67 +138,150 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
-  padding: 2rem;
+  padding: clamp(1rem, 2vw, 2rem);
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  background: url('/assets/bg/wishwall_scene@1x.png') center/cover no-repeat;
+  background-color: #0b0f1f;
+  overflow: hidden;
 }
 
-.wall-hud {
+.wish-wall::before {
+  content: '';
   position: absolute;
-  top: 2rem;
-  left: 2rem;
-  z-index: 10;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 10, 26, 0.25) 0%, rgba(6, 10, 26, 0.55) 60%, rgba(6, 10, 26, 0.8) 100%),
+    radial-gradient(circle at 20% 25%, rgba(96, 165, 250, 0.18), transparent 45%),
+    radial-gradient(circle at 75% 20%, rgba(167, 139, 250, 0.2), transparent 40%);
+  opacity: 0.7;
+  pointer-events: none;
+  mix-blend-mode: normal;
 }
 
-.count-badge {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.wall-panel {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  padding: clamp(1.5rem, 2.4vw, 2.5rem);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(160deg, rgba(20, 24, 60, 0.88), rgba(12, 14, 32, 0.92));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 60px rgba(6, 10, 24, 0.6);
 }
 
-.count-text {
-  color: white;
-  font-size: 1.25rem;
-  font-weight: bold;
+.wall-panel::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  pointer-events: none;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.close-button:hover {
+  border-color: rgba(244, 63, 94, 0.7);
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.wall-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hud-label {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.78);
+  line-height: 1.4;
+}
+
+.hud-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  color: #e2e8f0;
+}
+
+.hud-value {
+  font-size: clamp(2.2rem, 3vw, 2.8rem);
+  font-weight: 700;
+  color: #a78bfa;
+  text-shadow: 0 0 18px rgba(167, 139, 250, 0.6);
+}
+
+.hud-total {
+  font-size: 1rem;
+  color: rgba(226, 232, 240, 0.7);
 }
 
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: clamp(0.8rem, 1.4vw, 1.4rem);
   width: 100%;
-  margin: 4rem auto 2rem;
-  padding: 0 1rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  transform: rotate(-5deg) skewX(-4deg);
 }
 
-@media (min-width: 768px) {
+@media (max-width: 1024px) {
   .wall-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, minmax(110px, 1fr));
+    transform: rotate(-4deg) skewX(-3deg);
   }
 }
 
+@media (max-width: 768px) {
+  .wall-grid {
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    transform: none;
+  }
+}
+
+.panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+}
+
 .cta-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 24px;
-  padding: 1rem 3rem;
-  font-size: 1.125rem;
-  font-weight: bold;
+  background: rgba(226, 232, 240, 0.08);
+  color: #e2e8f0;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 8px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-  margin: 2rem 0;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .cta-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6);
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.8);
+  color: #f8fafc;
 }
 
 .cta-button:disabled {
@@ -195,20 +290,35 @@ onMounted(async () => {
 }
 
 .rule-bar {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .rule-item {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.875rem;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.rule-item--time {
+  color: rgba(226, 232, 240, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  justify-self: end;
+}
+
+@media (max-width: 900px) {
+  .rule-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .rule-item--time {
+    justify-self: start;
+  }
 }
 
 .error-toast {

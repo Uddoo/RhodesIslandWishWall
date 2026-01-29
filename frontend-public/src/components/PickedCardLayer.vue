@@ -64,8 +64,8 @@ function handleClose() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: rgba(3, 6, 23, 0.75);
+  backdrop-filter: blur(8px);
 }
 
 .picked-layer__card-container {
@@ -124,28 +124,33 @@ function handleClose() {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(2, 6, 23, 0.5);
   overflow: hidden;
 }
 
 .picked-card__face--back {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.85) 0%, rgba(226, 232, 240, 0.9) 35%, rgba(30, 41, 59, 0.95) 35%, rgba(15, 23, 42, 0.98) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .picked-card__back-pattern {
-  width: 60%;
-  height: 60%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 62%;
+  height: 62%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.35), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(148, 163, 184, 0.18), rgba(148, 163, 184, 0.18) 6px, transparent 6px, transparent 12px);
+  border: 1px solid rgba(148, 163, 184, 0.3);
   border-radius: 8px;
+  transform: rotate(45deg);
 }
 
 .picked-card__face--front {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%);
   transform: rotateY(180deg);
   display: flex;
   flex-direction: column;
@@ -160,8 +165,8 @@ function handleClose() {
 }
 
 .picked-card__reward-title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
