@@ -119,7 +119,7 @@ function handleCloseLayer() {
 // 初始化
 onMounted(async () => {
   initDeviceId()
-  initCards(18) // 创建 18 张卡片
+  initCards(10) // 创建 10 张卡片 (2排5列)
   await fetchEligibility()
 })
 </script>
@@ -132,22 +132,38 @@ onMounted(async () => {
   padding: clamp(1.2rem, 2vw, 2rem) clamp(1.2rem, 3vw, 3rem) 4.5rem;
   display: flex;
   flex-direction: column;
-  background: url('/assets/bg/wishwall_scene@1x.png') center/cover no-repeat;
   background-color: #0b0f1f;
   overflow: hidden;
 }
 
+/* 模糊遮罩层 */
 .wish-wall::before {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(6, 10, 26, 0.25) 0%, rgba(6, 10, 26, 0.55) 60%, rgba(6, 10, 26, 0.8) 100%),
-    radial-gradient(circle at 20% 25%, rgba(96, 165, 250, 0.18), transparent 45%),
-    radial-gradient(circle at 75% 20%, rgba(167, 139, 250, 0.2), transparent 40%);
-  opacity: 0.7;
+  background: rgba(11, 15, 31, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   pointer-events: none;
-  mix-blend-mode: normal;
+  z-index: 0;
+}
+
+/* 背景图片层 */
+.wish-wall::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1800px;
+  height: 880px;
+  max-width: 95vw;
+  max-height: calc(95vw * 880 / 1800);
+  background: url('/assets/bg/wishwall_scene@1x.png') center/contain no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .wall-header {
@@ -157,7 +173,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  z-index: 2;
+  z-index: 10;
 }
 
 .hud-label {
@@ -189,14 +205,14 @@ onMounted(async () => {
 
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
   grid-template-rows: repeat(2, minmax(140px, 1fr));
   gap: clamp(0.6rem, 1.2vw, 1rem);
-  width: min(1080px, 92vw);
+  width: min(900px, 92vw);
   margin: clamp(4.5rem, 10vh, 6.5rem) auto 0;
   transform: rotate(-5deg) skewX(-4deg);
   align-self: center;
-  z-index: 1;
+  z-index: 10;
 }
 
 .cta-button {
@@ -212,7 +228,7 @@ onMounted(async () => {
   letter-spacing: 0.12em;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  z-index: 2;
+  z-index: 10;
 }
 
 .cta-button:hover:not(:disabled) {
@@ -238,7 +254,7 @@ onMounted(async () => {
   padding: 0.9rem clamp(1.2rem, 3vw, 3rem);
   background: rgba(8, 12, 30, 0.7);
   border-top: 1px solid rgba(255, 255, 255, 0.18);
-  z-index: 2;
+  z-index: 10;
 }
 
 .rule-item {
@@ -256,10 +272,10 @@ onMounted(async () => {
 
 @media (max-width: 1024px) {
   .wall-grid {
-    grid-template-columns: repeat(4, minmax(110px, 1fr));
-    grid-template-rows: repeat(3, minmax(120px, 1fr));
+    grid-template-columns: repeat(5, minmax(110px, 1fr));
+    grid-template-rows: repeat(2, minmax(120px, 1fr));
     transform: rotate(-4deg) skewX(-3deg);
-    width: min(900px, 94vw);
+    width: min(800px, 94vw);
   }
 
   .cta-button {
@@ -269,8 +285,8 @@ onMounted(async () => {
 
 @media (max-width: 768px) {
   .wall-grid {
-    grid-template-columns: repeat(3, minmax(100px, 1fr));
-    grid-template-rows: repeat(4, minmax(110px, 1fr));
+    grid-template-columns: repeat(5, minmax(90px, 1fr));
+    grid-template-rows: repeat(2, minmax(100px, 1fr));
     transform: none;
   }
 
