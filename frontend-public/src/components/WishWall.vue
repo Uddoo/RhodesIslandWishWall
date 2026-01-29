@@ -1,44 +1,38 @@
 <template>
   <section class="wish-wall" :data-stage="stage">
-    <div class="wall-panel">
-      <button class="close-button" type="button" @click="handleClosePanel">×</button>
-
-      <header class="wall-header">
-        <div class="hud-label">REMAINING<br />剩余可选签数</div>
-        <div class="hud-count">
-          <span class="hud-value">{{ remaining }}</span>
-          <span class="hud-total">/{{ total }}</span>
-        </div>
-      </header>
-
-      <!-- 卡片网格 -->
-      <div class="wall-grid">
-        <Card
-          v-for="card in cards"
-          :key="card.id"
-          :card="card"
-          :tilt="tilt"
-          @pick="handlePick"
-        />
+    <header class="wall-header">
+      <div class="hud-label">REMAINING<br />剩余可选签数</div>
+      <div class="hud-count">
+        <span class="hud-value">{{ remaining }}</span>
+        <span class="hud-total">/{{ total }}</span>
       </div>
+    </header>
 
-      <!-- 主按钮 -->
-      <div class="panel-actions">
-        <button
-          class="cta-button"
-          :disabled="remaining === 0 || loading"
-          @click="handleButtonClick"
-        >
-          {{ ctaText }}
-        </button>
-      </div>
+    <!-- 卡片网格 -->
+    <div class="wall-grid">
+      <Card
+        v-for="card in cards"
+        :key="card.id"
+        :card="card"
+        :tilt="tilt"
+        @pick="handlePick"
+      />
+    </div>
 
-      <!-- 规则栏 -->
-      <div class="rule-bar">
-        <span class="rule-item">RULE1 用尽当日次数抽取的所有许愿签中，合成玉数量最多的1张为当日最终奖励。</span>
-        <span class="rule-item">RULE2 当日许愿签合成玉奖励不足400时，次日可选择3张许愿签。</span>
-        <span class="rule-item rule-item--time">结束时间 2026/12/31 03:59</span>
-      </div>
+    <!-- 主按钮 -->
+    <button
+      class="cta-button"
+      :disabled="remaining === 0 || loading"
+      @click="handleButtonClick"
+    >
+      {{ ctaText }}
+    </button>
+
+    <!-- 规则栏 -->
+    <div class="rule-bar">
+      <span class="rule-item">RULE1 用尽当日次数抽取的所有许愿签中，合成玉数量最多的1张为当日最终奖励。</span>
+      <span class="rule-item">RULE2 当日许愿签合成玉奖励不足400时，次日可选择3张许愿签。</span>
+      <span class="rule-item rule-item--time">结束时间 2026/12/31 03:59</span>
     </div>
 
     <!-- 错误提示 -->
@@ -113,9 +107,6 @@ function handleButtonClick() {
   }
 }
 
-function handleClosePanel() {
-  console.log('close panel')
-}
 
 // 处理关闭弹出层
 function handleCloseLayer() {
@@ -138,10 +129,9 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  padding: clamp(1rem, 2vw, 2rem);
+  padding: clamp(1.2rem, 2vw, 2rem) clamp(1.2rem, 3vw, 3rem) 4.5rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   background: url('/assets/bg/wishwall_scene@1x.png') center/cover no-repeat;
   background-color: #0b0f1f;
   overflow: hidden;
@@ -160,54 +150,14 @@ onMounted(async () => {
   mix-blend-mode: normal;
 }
 
-.wall-panel {
-  position: relative;
-  z-index: 1;
-  width: min(1180px, 100%);
-  padding: clamp(1.5rem, 2.4vw, 2.5rem);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: linear-gradient(160deg, rgba(20, 24, 60, 0.88), rgba(12, 14, 32, 0.92));
-  backdrop-filter: blur(16px);
-  box-shadow: 0 24px 60px rgba(6, 10, 24, 0.6);
-}
-
-.wall-panel::after {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(124, 58, 237, 0.3);
-  pointer-events: none;
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(15, 23, 42, 0.6);
-  color: #e2e8f0;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.close-button:hover {
-  border-color: rgba(244, 63, 94, 0.7);
-  background: rgba(244, 63, 94, 0.15);
-}
-
 .wall-header {
+  position: absolute;
+  top: clamp(1.4rem, 3vw, 2.4rem);
+  left: clamp(1.6rem, 3vw, 3rem);
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 2;
 }
 
 .hud-label {
@@ -240,42 +190,29 @@ onMounted(async () => {
 .wall-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(120px, 1fr));
-  gap: clamp(0.8rem, 1.4vw, 1.4rem);
-  width: 100%;
-  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  grid-template-rows: repeat(2, minmax(140px, 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+  width: min(1080px, 92vw);
+  margin: clamp(4.5rem, 10vh, 6.5rem) auto 0;
   transform: rotate(-5deg) skewX(-4deg);
-}
-
-@media (max-width: 1024px) {
-  .wall-grid {
-    grid-template-columns: repeat(4, minmax(110px, 1fr));
-    transform: rotate(-4deg) skewX(-3deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .wall-grid {
-    grid-template-columns: repeat(3, minmax(100px, 1fr));
-    transform: none;
-  }
-}
-
-.panel-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding-bottom: 1rem;
+  align-self: center;
+  z-index: 1;
 }
 
 .cta-button {
-  background: rgba(226, 232, 240, 0.08);
+  position: absolute;
+  right: clamp(2rem, 5vw, 5rem);
+  bottom: clamp(5.5rem, 10vh, 7rem);
+  background: rgba(226, 232, 240, 0.12);
   color: #e2e8f0;
-  border: 1px solid rgba(226, 232, 240, 0.6);
-  border-radius: 8px;
-  padding: 0.75rem 1.75rem;
+  border: 1px solid rgba(226, 232, 240, 0.65);
+  border-radius: 6px;
+  padding: 0.75rem 2.2rem;
   font-size: 0.95rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  z-index: 2;
 }
 
 .cta-button:hover:not(:disabled) {
@@ -290,12 +227,18 @@ onMounted(async () => {
 }
 
 .rule-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 1.5rem;
+  grid-template-columns: 1.2fr 1.2fr auto;
+  gap: 1.2rem;
   align-items: center;
-  padding: 1rem 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.9rem clamp(1.2rem, 3vw, 3rem);
+  background: rgba(8, 12, 30, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 2;
 }
 
 .rule-item {
@@ -311,8 +254,34 @@ onMounted(async () => {
   justify-self: end;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .wall-grid {
+    grid-template-columns: repeat(4, minmax(110px, 1fr));
+    grid-template-rows: repeat(3, minmax(120px, 1fr));
+    transform: rotate(-4deg) skewX(-3deg);
+    width: min(900px, 94vw);
+  }
+
+  .cta-button {
+    bottom: clamp(6rem, 12vh, 7.5rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .wall-grid {
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    grid-template-rows: repeat(4, minmax(110px, 1fr));
+    transform: none;
+  }
+
+  .cta-button {
+    position: static;
+    align-self: center;
+    margin-top: 1rem;
+  }
+
   .rule-bar {
+    position: static;
     grid-template-columns: 1fr;
   }
 
