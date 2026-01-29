@@ -32,7 +32,7 @@
     <div class="rule-bar">
       <span class="rule-item">RULE1 用尽当日次数抽取的所有许愿签中，合成玉数量最多的1张为当日最终奖励。</span>
       <span class="rule-item">RULE2 当日许愿签合成玉奖励不足400时，次日可选择3张许愿签。</span>
-      <span class="rule-item rule-item--time">结束时间 2026/12/31 03:59</span>
+      <span class="rule-item rule-item--time">结束时间 2026/2/2 03:59</span>
     </div>
 
     <!-- 错误提示 -->
