@@ -58,3 +58,4 @@ logs/
 # AI
 openspecs/
 .github/
+.shared/
