@@ -54,3 +54,6 @@ logs/
 # Misc
 *.bak
 *.orig
+
+# AI
+openspecs/
